@@ -58,7 +58,7 @@ void *sd_read_journal(__attribute__((unused)) char *unit) {
           "%s.%06ld %s %.*s\n",
           tmbuf,
           tv.tv_usec,
-          (char *)(jsrc + 18)
+          (char *)(jsrc + 18),
           (int) len,
           // Strip off the "MESSSAGE=" prefix
           (char *)(jmsg + 8)
