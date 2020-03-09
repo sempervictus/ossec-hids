@@ -3,13 +3,17 @@
 #include <systemd/sd-journal.h>
 
 int prime_sd_journal(sd_journal **jrn) {
-  int ret;
-  ret = sd_journal_open(jrn, SD_JOURNAL_LOCAL_ONLY);
-  ret = sd_journal_get_fd(*(jrn));
-  ret = sd_journal_seek_tail(*(jrn));
-  // prime sd_journal_next before the reader loop
-  ret = sd_journal_previous(*(jrn));
-  return ret;
+  if(!sd_journal_open(jrn, SD_JOURNAL_LOCAL_ONLY)) {
+      if(sd_journal_get_fd(*(jrn)) > 0) {
+           if(!sd_journal_seek_tail(*(jrn))) {
+               if(sd_journal_previous(*(jrn)) >= 0) {
+                   return 0;
+               }
+           }
+      }
+  }
+
+  return -1;
 }
 
 void *sd_read_journal(__attribute__((unused)) char *unit) {
@@ -23,7 +27,10 @@ void *sd_read_journal(__attribute__((unused)) char *unit) {
   struct tm *nowtm;
   char tmbuf[64], final_msg[OS_MAXSTR];
 
-  prime_sd_journal(&jrn);
+  if(prime_sd_journal(&jrn) < 0) {
+      merror("%s: Can't connect to journald", ARGV0);
+      return (NULL);
+  }
   ret = sd_journal_next(jrn);
   // Anything negative is an error
   while (ret >= 0) {
@@ -73,5 +80,5 @@ void *sd_read_journal(__attribute__((unused)) char *unit) {
   }
   // Clean up after ourselves and bail
   sd_journal_close(jrn);
-  return NULL;
+  return (NULL);
 }
