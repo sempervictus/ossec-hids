@@ -88,7 +88,7 @@ void *sd_read_journal(__attribute__((unused)) char *unit) {
         snprintf(
           final_msg,
           sizeof(final_msg),
-          "%s:00 %s %s %.*s\n",
+          "%s:00 %s %s: %.*s\n",
           tmbuf,
           // Strip the "_HOSTNAME", "SYSLOG_IDENTIFIER=" and "MESSAGE=" prefixes
           (char *)(jhst + 10),
