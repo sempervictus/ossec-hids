@@ -22,11 +22,12 @@ libraries and tools installed:
 - libevent
 - libpcre2
 - libz
+- libsystemd (Optional to use Journald)
 - make, gcc
 
 On a Ubuntu/Debian system, these can be installed with:
 
-apt install libz-dev libssl-dev libpcre2-dev libevent-dev build-essential
+apt install libz-dev libssl-dev libpcre2-dev libevent-dev build-essential libsystemd-dev
 
 Fast way steps:
 
